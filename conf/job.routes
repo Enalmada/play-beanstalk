@@ -1,0 +1,3 @@
+# Note that split routes files must go into their own package: https://github.com/playframework/playframework/issues/4430
+
+POST        /backup        controllers.jobs.Job.backup

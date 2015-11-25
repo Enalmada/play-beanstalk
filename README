@@ -1,0 +1,49 @@
+Beanstalk is one of the easiest ways to get:
+ - no downtime deployments
+ - time/load based server autoscaling
+ - automatic reloads on environment variable changes
+ - manual/automatic version rollbacks when there are problems
+ - ssl using uploaded cert with one click
+
+Directions
+=================================
+
+-- Create beanstalk web environment using sample image (no rds database).
+   If beanstalk fails on initial image it can get stuck, better to overwrite healthy sample with your initial build file.
+
+-- Create an s3 bucket to hold your build files.  Give access to your beanstalk role for this bucket.
+   You can just give the role full readonly permission as an easy test.  Production should lock it down to bucket readonly.
+
+-- Edit manual_release.sh with your application name, bucket name, environment name.
+   Run "./manual_release.sh initial" to push initial build to s3, create beanstalk version, use version
+
+Optional:
+=================================
+
+Connect to a database
+   Create RDS database manually using your preferred settings.  Make sure security group matches beanstalk.
+   Uncomment
+   Update beanstalk/.ebextensions/bootstrap_env.config > DB_URL with the correct jdbc url.
+
+Setup continuous deployment
+   Check this code into Git or Bitbucket.  I use Bitbucket because it has free private repo.
+   Git/Bitbucket specifically interface with shippable.com.
+   Create a shippable.com account.  It is free, docker friendly, and faster build than others.  Note the shippable.yml in the root.
+   But you could use any modern build provider:
+   https://www.quora.com/What-is-the-difference-between-Bamboo-CircleCI-CIsimple-Ship-io-Codeship-Jenkins-Hudson-Semaphoreapp-Shippable-Solano-CI-TravisCI-and-Wercker
+   Edit shippable.yml with your aws keys, bucketname, application name, environment name
+   You will need to go into project settings and encrypt this: AWS_SECRET_ACCESS_KEY=<your secret key here> for the secret area
+
+Setup log aggregation
+   The idea behind beanstalk is that you should never have to login to machine directly.
+   Although beanstalk has some basic manual logging retevial, you are going to want to use a 3rd party logging solution.
+   I recommend Sumologic account.  Genarate accesskey/accessid and put it in .ebextensions/sumo_logic.config
+   SumoLogic has a free tier and aggregate logging, query, alerting make it very valuable.
+
+Setup server monitoring
+   Beanstalk gives you basic server monitoring and health but New Relic takes monitoring to the next level.
+   Create New Relic account.  Put your license key in newrelic.conf.  This will handle server monitoring, can be more convenient to use.
+   It has separate server and app monitoring software with a free tier.
+
+Setup ssl
+   Get a free ssl key with https://letsencrypt.org.  Upload it to aws.  Select it in loadbalancing section of configuration.

@@ -1,0 +1,8 @@
+# When this file is rolled out to aws beanstalk worker, it sends jobs to queue that is read by worker
+# WARNING: I had to set queue type to text to get it to work
+
+version: 1
+cron:
+ - name: "backup-job"          # required - unique across all entries in this file
+   url: "/job/backup"          # required - does not need to be unique
+   schedule: "* * * * *"       # required - does not need to be unique

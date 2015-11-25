@@ -1,0 +1,38 @@
+# exclude
+branches:
+  except:
+    - master
+
+# include
+branches:
+  only:
+    - master
+
+language: scala
+scala:
+  - 2.11.7
+jdk:
+  - oraclejdk8
+
+node_js:
+   - "0.12.7"
+
+# aws access key of user with s3 and beanstalk access
+env:
+  global:
+    - AWS_ACCESS_KEY_ID=<ACCESS_KEY>
+    - secure: <shippable secured secret in settings: AWS_SECRET_ACCESS_KEY=<AWS_SECRET> >
+
+script:
+  - export SBT_OPTS="-Xmx512M -Xss512M -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -Duser.timezone=UTC"
+  - sbt compile test stage dist docker:stage
+
+after_success:
+  - cp -R beanstalk/. target/docker
+  - cd target/docker
+  - jar -cMf $REPO_NAME-$BUILD_NUMBER.zip .
+  - aws s3 cp $REPO_NAME-$BUILD_NUMBER.zip s3://<YOUR_BUCKET>/$REPO_NAME-$BUILD_NUMBER.zip
+  - aws elasticbeanstalk create-application-version --application-name <YOUR_APPLICATION> --version-label $BUILD_NUMBER --source-bundle S3Bucket=<YOUR_BUCKET>,S3Key=$REPO_NAME-$BUILD_NUMBER.zip --region us-east-1
+  - aws elasticbeanstalk update-environment         --environment-name <WEB_ENVIRONMENT>  --version-label $BUILD_NUMBER --region us-east-1
+  # If you want to do a worker tier,
+  # - aws elasticbeanstalk update-environment --environment-name <WORKER_ENV_NAME> --version-label $BUILD_NUMBER --region us-east-1
