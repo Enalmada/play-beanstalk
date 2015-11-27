@@ -17,6 +17,13 @@ jdk:
 node_js:
    - "0.12.7"
 
+notifications:
+     email:
+         recipients:
+             - your@email.com
+         on_success: change
+         on_failure: always
+
 # aws access key of user with s3 and beanstalk access
 env:
   global:
@@ -29,10 +36,11 @@ script:
 
 after_success:
   - cp -R beanstalk/. target/docker
+  - cp -R newrelic target/docker/stage
   - cd target/docker
-  - jar -cMf $REPO_NAME-$BUILD_NUMBER.zip .
-  - aws s3 cp $REPO_NAME-$BUILD_NUMBER.zip s3://<YOUR_BUCKET>/$REPO_NAME-$BUILD_NUMBER.zip
-  - aws elasticbeanstalk create-application-version --application-name <YOUR_APPLICATION> --version-label $BUILD_NUMBER --source-bundle S3Bucket=<YOUR_BUCKET>,S3Key=$REPO_NAME-$BUILD_NUMBER.zip --region us-east-1
+  - jar -cMf docker-$BUILD_NUMBER.zip .
+  - aws s3 cp docker-$BUILD_NUMBER.zip s3://<YOUR_BUCKET>/docker-$BUILD_NUMBER.zip
+  - aws elasticbeanstalk create-application-version --application-name <YOUR_APPLICATION> --version-label $BUILD_NUMBER --source-bundle S3Bucket=<YOUR_BUCKET>,S3Key=docker-$BUILD_NUMBER.zip --region us-east-1
   - aws elasticbeanstalk update-environment         --environment-name <WEB_ENVIRONMENT>  --version-label $BUILD_NUMBER --region us-east-1
   # If you want to do a worker tier,
   # - aws elasticbeanstalk update-environment --environment-name <WORKER_ENV_NAME> --version-label $BUILD_NUMBER --region us-east-1

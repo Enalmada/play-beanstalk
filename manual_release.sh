@@ -19,6 +19,7 @@ echo "Activator docker:stage (not working on windows so i do it manually)"
 activator docker:stage
 echo "Move beanstalk specific files into docker image..."
 cp -R beanstalk/. target/docker
+cp -R newrelic target/docker/stage
 cd target/docker
 echo "Zip docker image up..."
 rm -f *.zip && jar -cMf $APPLICATION-$1.zip .
