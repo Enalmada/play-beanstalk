@@ -23,14 +23,15 @@ play-beanstalk is built and tested with play 2.4 but the principles apply to oth
 -- Edit manual_release.sh with your application name, bucket name, environment name.
    Run "./manual_release.sh initial" to push initial build to s3, create beanstalk version, use version
 
-Optional:
-=================================
+##Optional:
 
-Connect to a database
+
+### Connect to a database
+
    Create RDS database manually using your preferred settings.  Make sure security group matches beanstalk.
    Update beanstalk/.ebextensions/bootstrap_env.config > DB_URL with the correct jdbc url.
 
-Setup continuous deployment
+###Setup continuous deployment
    Check this code into Git or Bitbucket.  I use Bitbucket because it has free private repo.
    Git/Bitbucket specifically interface with shippable.com.
    Create a shippable.com account.  It is free, docker friendly, and faster build than others.  Note the shippable.yml in the root.
@@ -39,18 +40,18 @@ Setup continuous deployment
    Edit shippable.yml with your aws keys, bucketname, application name, environment name
    You will need to go into project settings and encrypt this: AWS_SECRET_ACCESS_KEY=<your secret key here> for the secret area
 
-Setup log aggregation
+###Setup log aggregation
    The idea behind beanstalk is that you should never have to login to machine directly.
    Although beanstalk has some basic manual logging retevial, you are going to want to use a 3rd party logging solution.
    I recommend Sumologic account.  Genarate accesskey/accessid and put it in .ebextensions/sumo_logic.config
    SumoLogic has a free tier and aggregate logging, query, alerting make it very valuable.
 
-Setup server monitoring
+###Setup server monitoring
    Beanstalk gives you basic server monitoring and health but New Relic takes monitoring to the next level.
    Create New Relic account.  Put your license key in newrelic.conf.  This will handle server monitoring, can be more convenient to use.
    It has separate server and app monitoring software with a free tier.
 
-Setup ssl
+###Setup ssl
    Get a free ssl key with https://letsencrypt.org.  Upload it to aws.  Select it in loadbalancing section of configuration.
 
 
