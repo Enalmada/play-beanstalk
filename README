@@ -1,12 +1,17 @@
-Beanstalk is one of the easiest ways to get:
+# play-beanstalk [![Build Status](https://travis-ci.org/Enalmada/play-beanstalk.svg?branch=master)](https://travis-ci.org/Enalmada/play-beanstalk) [![Join the chat at https://gitter.im/Enalmada/play-beanstalk](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Enalmada/play-beanstalk?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+AWS Beanstalk is one of the easiest ways to get you app up production ready:
  - no downtime deployments
  - time/load based server autoscaling
  - automatic reloads on environment variable changes
- - manual/automatic version rollbacks when there are problems
- - ssl using uploaded cert with one click
+ - automatic version rollbacks when there are release health problems
+ - ssl using your uploaded cert with one click
 
-Directions
-=================================
+
+#### Version information
+play-beanstalk is built and tested with play 2.4 but the principles apply to other versions.
+
+## Quickstart
 
 -- Create beanstalk web environment using sample image (no rds database).
    If beanstalk fails on initial image it can get stuck, better to overwrite healthy sample with your initial build file.
@@ -47,3 +52,18 @@ Setup server monitoring
 
 Setup ssl
    Get a free ssl key with https://letsencrypt.org.  Upload it to aws.  Select it in loadbalancing section of configuration.
+
+
+## License
+
+Copyright (c) 2015 Adam Lane
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this work except in compliance with the License. You may obtain a copy of the License in the LICENSE file, or at:
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+
+
+
