@@ -15,7 +15,13 @@ BEANSTALK_READY=true
 # You shouldn't need to change anything below this line
 # --------------------------------------------------------------------------
 
-echo "Activator docker:stage (not working on windows so i do it manually)"
+if [ "$#" -ne 1 ]
+then
+  echo "Usage: manual_release.sh <VERSION>"
+  exit 1
+fi
+
+echo "Activator docker:stage"
 activator docker:stage
 echo "Move beanstalk specific files into docker image..."
 cp -R beanstalk/. target/docker

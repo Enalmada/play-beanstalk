@@ -14,10 +14,11 @@ play-beanstalk is built and tested with play 2.4 but the principles apply to oth
 ## Quickstart
 
 -- Create beanstalk web environment using sample image (no rds database).
-   If beanstalk fails on initial image it can get stuck, better to overwrite healthy sample with your initial build file.
+   Get famaliar with all the settings first in beanstalk before trying to upload your stuff.
+   If something goes wrong, just terminate your environment and start again.  Embrace ephemeral infrastructure. 
 
 -- Create an s3 bucket to hold your build files.  Give access to your beanstalk role for this bucket.
-   You can just give the role full readonly permission as an easy test.  Production should lock it down to bucket readonly.
+   If you get lazy and grant full s3 access, don't forget to lock it down to bucket readonly later.
 
 -- Edit manual_release.sh with your application name, bucket name, environment name.
    Run "./manual_release.sh initial" to push initial build to s3, create beanstalk version, use version
@@ -27,7 +28,6 @@ Optional:
 
 Connect to a database
    Create RDS database manually using your preferred settings.  Make sure security group matches beanstalk.
-   Uncomment
    Update beanstalk/.ebextensions/bootstrap_env.config > DB_URL with the correct jdbc url.
 
 Setup continuous deployment
