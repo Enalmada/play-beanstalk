@@ -1,4 +1,4 @@
-# play-beanstalk 
+# play-beanstalk [![Build Status](https://travis-ci.org/Enalmada/play-beanstalk.svg?branch=master)](https://travis-ci.org/Enalmada/play-beanstalk) [![Join the chat at https://gitter.im/Enalmada/play-beanstalk](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Enalmada/play-beanstalk?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 AWS Beanstalk is one of the easiest ways to get you app up production ready:
  - no downtime deployments
@@ -65,7 +65,3 @@ http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 
 
-
-
-
-Join the chat at https://gitter.im/Enalmada/play-beanstalk
