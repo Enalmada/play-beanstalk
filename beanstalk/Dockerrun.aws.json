@@ -4,5 +4,6 @@
     {
       "ContainerPort": "9000"
     }
-  ]
+  ],
+  "Logging": "/var/log/web"
 }

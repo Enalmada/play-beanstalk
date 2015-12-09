@@ -1,0 +1,29 @@
+<configuration>
+
+    <conversionRule conversionWord="coloredLevel" converterClass="play.api.Logger$ColoredLevel"/>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/var/log/web/application.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- monthly rollover with compression -->
+            <fileNamePattern>/var/log/web/archive/application-log-%d{yyyy-MM}.gz</fileNamePattern>
+            <!-- keep 3 months worth of history -->
+            <maxHistory>3</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date{yyyy-MM-dd HH:mm:ss ZZZZ} - [%level] - from %logger in %thread %n%message%n%xException%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <logger name="play" level="INFO"/>
+    <logger name="application" level="INFO"/>
+    <!-- BoneCP is very chatty, so suppress everything but the errors -->
+    <logger name="com.jolbox.bonecp" level="ERROR"/>
+
+    <root level="INFO">
+        <!-- <appender-ref ref="STDOUT" /> -->
+        <appender-ref ref="FILE"/>
+    </root>
+
+</configuration>

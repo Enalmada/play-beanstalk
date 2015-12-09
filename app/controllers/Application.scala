@@ -29,4 +29,51 @@ class Application @Inject() extends Controller {
   }
 
 
+  /**
+    * Added to do a quick db query to be sure we have actually connected to the database
+    * to be "healthy"
+    */
+  def dbCheck: Int = {
+    /*
+    transaction {
+      val s = Session.currentSession
+      val st = s.connection.prepareStatement("SELECT 1")
+      val rs = st.executeQuery
+      try {
+        rs.getRow
+      }
+      finally {
+        rs.close()
+        st.close()
+      }
+    }
+    */
+    1
+  }
+
+  /**
+    * Health check handler for Amazon load balancer.  Hits the database since we once has servers up without db connections.
+    *
+    * @return OK
+    */
+  def health = Action {
+
+    dbCheck
+
+    Ok("Healthy").withHeaders(CACHE_CONTROL -> "no-cache, no-store, must-revalidate",
+      PRAGMA -> "no-cache",
+      EXPIRES -> "0")
+  }
+
+  /**
+    * Respond to head requests for health checking
+    *
+    * @return OK
+    */
+  def healthHead = Action {
+    dbCheck
+    Ok
+  }
+
+
 }

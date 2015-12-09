@@ -14,6 +14,7 @@ libraryDependencies ++= Seq(
   cache,
   ws,
   specs2 % Test,
+  "janino" % "janino" % "2.5.10",                     // Runtime Java compiler, for Logback -- see logback-test.xml
   "com.typesafe.play" %% "anorm" % "2.5.0",           // DB Connection
   "org.postgresql" % "postgresql" % "9.4-1201-jdbc41" // JDBC Driver
 )
@@ -22,6 +23,8 @@ resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 
 // This enables the modern injected routers which is what you should be using
 routesGenerator := InjectedRoutesGenerator
+
+javaOptions in Test +="-Dlogger.resource=logback-test.xml"
 
 // Beanstalk would go to 100% cpu at random release so I had to change to supervisord
 //    https://stackoverflow.com/questions/27168112/aws-eb-play-framework-and-docker-application-already-running

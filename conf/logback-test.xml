@@ -1,0 +1,42 @@
+<!-- https://github.com/overview/overview-server/commit/2535364bb2a83acab43b1625947c0456213b840f -->
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- Play 2.4.1 bug: during startup, Play _always_ (even in test) resets
+         logger configuration. But it shows a warning if we try to specify
+         a log file. https://github.com/playframework/playframework/issues/4574
+         -->
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator>
+                <expression>event.getMessage().contains("Logger configuration in conf files is deprecated and has no effect.")</expression>
+            </evaluator>
+            <onMatch>DENY</onMatch>
+        </filter>
+        <encoder>
+            <pattern>%d{HH:mm:ss,America/Los_Angeles} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Off these ones as they are annoying, and anyway we manage configuration ourself -->
+    <logger name="com.gargoylesoftware.htmlunit.javascript" level="OFF"/>
+
+    <!-- Unfortunatly 3rd party css like bootstrap causes massive warnings -->
+    <logger name="com.gargoylesoftware.htmlunit.DefaultCssErrorHandler" level="ERROR"/>
+    <!-- Unfortunately htmlunit returns warning for old text/javascript  -->
+    <logger name="com.gargoylesoftware.htmlunit.IncorrectnessListenerImpl" level="ERROR"/>
+    <!-- Unfortunately htmlunit returns warning script not being javascript
+         toto make sure this can't be corrected
+    -->
+    <logger name="com.gargoylesoftware.htmlunit.html.HtmlScript" level="ERROR"/>
+    <!-- Unfortunately htmlunit returns warning for negative max-age in cookie which is fine -->
+    <logger name="org.apache.http.client.protocol.ResponseProcessCookies" level="ERROR"/>
+
+
+    <root level="WARN">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <logger name="play" level="WARN"/>
+    <logger name="application" level="WARN"/>
+
+</configuration>
