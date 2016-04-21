@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
 
-# File takes in a version number.  You can delete them in beanstalk later.
+# File takes in a version number.  Be careful not to reuse version, it will roll out the original version!
+# TODO: make the script use a timestamp as version to avoid the reuse issue
+# You can delete them in beanstalk later.
 # You should be using a continuous deployment solution like shippable.com but for generating the first
 # build image or for doing initial testing, this script can help.
 
 # Configuration
 APPLICATION=play-beanstalk
 BUCKET=my-bucket
-WEB_ENV_NAME=dockerized-web
-JOB_ENV_NAME=dockerized-worker
+WEB_ENV_NAME=play-beanstalk-web
+JOB_ENV_NAME=play-beanstalk-worker
 REGION=us-east-1
 BEANSTALK_READY=true
 
@@ -21,19 +23,11 @@ then
   exit 1
 fi
 
-echo "Activator docker:stage"
-activator docker:stage
-echo "Move beanstalk specific files into docker image..."
-cp -R beanstalk/. target/docker
-cp -R newrelic target/docker/stage
-cd target/docker
-echo "Zip docker image up..."
-rm -f *.zip && jar -cMf $APPLICATION-$1.zip .
-echo "Copy zip to s3..."
-aws s3 cp docker-$1.zip s3://$BUCKET/docker-$1.zip
+echo "Activator dist"
+activator dist
 
-# When you first setup beanstalk it requires an initial version ready if you skip sample
-if [ "$BEANSTALK_READY" = true ] ; then
+# Not sure how to get the play build version so just hardcoding for now
+aws s3 cp target/universal/play-beanstalk-1.1-SNAPSHOT.zip s3://$BUCKET/$APPLICATION-$1.zip
 
 echo "Create beanstalk version..."
 aws elasticbeanstalk create-application-version --application-name $APPLICATION --version-label $1 --source-bundle S3Bucket=$BUCKET,S3Key=$APPLICATION-$1.zip --region $REGION
@@ -42,4 +36,3 @@ aws elasticbeanstalk update-environment --environment-name $WEB_ENV_NAME        
 echo "Tell beanstalk to use the new version in worker..."
 aws elasticbeanstalk update-environment --environment-name $JOB_ENV_NAME        --version-label $1 --region $REGION
 
-fi

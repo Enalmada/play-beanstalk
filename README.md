@@ -5,16 +5,19 @@ AWS Beanstalk is one of the easiest ways to get you app up production ready:
  - time/load based server autoscaling
  - automatic reloads on environment variable changes
  - automatic version rollbacks when there are release health problems
- - ssl using your uploaded cert with one click
+ - ssl using AWS certificate manager
 
+It used to require play docker build but it is much easier and "activator dist" build file supported natively now.
 
 #### Version information
-play-beanstalk is built and tested with play 2.4 but the principles apply to other versions.
+play-beanstalk is built and tested with play 2.5 but the principles apply to other versions.
 
 ## Quickstart
 
--- Create beanstalk web environment using sample image (no rds database).
-   Get famaliar with all the settings first in beanstalk before trying to upload your stuff.
+-- This is worth a read: https://www.davemaple.com/articles/deploy-playframework-elastic-beanstalk-jenkins
+
+-- Create beanstalk web environment for type java.
+   Get it working with sample project they give you settings first before trying to upload your stuff.
    If something goes wrong, just terminate your environment and start again.  Embrace ephemeral infrastructure. 
 
 -- Create an s3 bucket to hold your build files.  Give access to your beanstalk role for this bucket.
@@ -22,6 +25,7 @@ play-beanstalk is built and tested with play 2.4 but the principles apply to oth
 
 -- Edit manual_release.sh with your application name, bucket name, environment name.
    Run "./manual_release.sh initial" to push initial build to s3, create beanstalk version, use version
+   But it is woth getting used to just uploading into beanstalk UI too.
 
 ##Optional:
 
@@ -29,10 +33,10 @@ play-beanstalk is built and tested with play 2.4 but the principles apply to oth
 ### Connect to a database
 
    Create RDS database manually using your preferred settings.  Make sure security group matches beanstalk.
-   Update beanstalk/.ebextensions/bootstrap_env.config > DB_URL with the correct jdbc url.
+   Update dist/.ebextensions/bootstrap_env.config > DB_URL with the correct jdbc url.
 
 ###Setup continuous deployment
-   Check this code into Git or Bitbucket.  I use Bitbucket because it has free private repo.
+   Check this code into Git or Bitbucket.  I use Bitbucket for private use because it has free private repo.
    Git/Bitbucket specifically interface with shippable.com.
    Create a shippable.com account.  It is free, docker friendly, and faster build than others.  Note the shippable.yml in the root.
    But you could use any modern build provider:
@@ -43,7 +47,7 @@ play-beanstalk is built and tested with play 2.4 but the principles apply to oth
 ###Setup log aggregation
    The idea behind beanstalk is that you should never have to login to machine directly.
    Although beanstalk has some basic manual logging retevial, you are going to want to use a 3rd party logging solution.
-   I recommend Sumologic account.  Genarate accesskey/accessid and put it in .ebextensions/sumo_logic.config
+   I recommend Sumologic account (loggly is popular too).  Genarate accesskey/accessid and put it in .ebextensions/sumo_logic.config
    SumoLogic has a free tier and aggregate logging, query, alerting make it very valuable.
 
 ###Setup server monitoring
@@ -51,8 +55,10 @@ play-beanstalk is built and tested with play 2.4 but the principles apply to oth
    Create New Relic account.  Put your license key in newrelic.conf.  This will handle server monitoring, can be more convenient to use.
    It has separate server and app monitoring software with a free tier.
 
-###Setup ssl
-   Get a free ssl key with https://letsencrypt.org.  Upload it to aws.  Select it in loadbalancing section of configuration.
+###Setup ssl for free
+   LetsEncrypt used to be the way to go but AWS now offers free ssl key with AWS Certificate manager service.
+   Unfortunately Beanstalk doesn't yet support AWS Certificate manager so you just gotta run a commandline manually but easy:
+   https://medium.com/@arcdigital/enabling-ssl-via-aws-certificate-manager-on-elastic-beanstalk-b953571ef4f8#.vamtglllf
 
 
 ## License

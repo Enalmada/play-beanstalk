@@ -1,12 +1,10 @@
-import com.typesafe.sbt.packager.docker._
-
 name := """play-beanstalk"""
 
-version := "1.0-SNAPSHOT"
+version := "1.1-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala, SbtWeb)
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
   filters,
@@ -14,7 +12,6 @@ libraryDependencies ++= Seq(
   cache,
   ws,
   specs2 % Test,
-  "janino" % "janino" % "2.5.10",                     // Runtime Java compiler, for Logback -- see logback-test.xml
   "com.typesafe.play" %% "anorm" % "2.5.0",           // DB Connection
   "org.postgresql" % "postgresql" % "9.4-1201-jdbc41" // JDBC Driver
 )
@@ -25,22 +22,4 @@ resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 routesGenerator := InjectedRoutesGenerator
 
 javaOptions in Test +="-Dlogger.resource=logback-test.xml"
-
-// Beanstalk would go to 100% cpu at random release so I had to change to supervisord
-//    https://stackoverflow.com/questions/27168112/aws-eb-play-framework-and-docker-application-already-running
-// I manually create the dockerfile because 2.4 is doing something funky with root stage dir
-//    "activator docker:stage" creates image under target/docker that you zip.
-//    http://www.scala-sbt.org/sbt-native-packager/formats/docker.html
-dockerCommands := Seq(
-  Cmd("FROM","java:8"),
-  Cmd("MAINTAINER","Name <email>"),
-  Cmd("EXPOSE", "9000"),
-  Cmd("ADD", "stage /"),
-  Cmd("WORKDIR", "/opt/docker"),
-  Cmd("RUN", "[\"chmod\", \"+x\", \"/opt/docker/bin/play-beanstalk\"]"),
-  Cmd("RUN", "apt-get update && apt-get install -y supervisor"),
-  Cmd("RUN", "[\"mkdir\", \"-p\", \"/var/log/supervisor\"]"),
-  Cmd("ADD", "supervisord.conf /etc/supervisor/conf.d/supervisord.conf"),
-  Cmd("CMD", "supervisord -c /etc/supervisor/conf.d/supervisord.conf")
-)
 

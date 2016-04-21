@@ -1,29 +1,44 @@
 <configuration>
 
-    <conversionRule conversionWord="coloredLevel" converterClass="play.api.Logger$ColoredLevel"/>
+    <conversionRule conversionWord="coloredLevel" converterClass="play.api.libs.logback.ColoredLevel"/>
 
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/var/log/web/application.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- monthly rollover with compression -->
-            <fileNamePattern>/var/log/web/archive/application-log-%d{yyyy-MM}.gz</fileNamePattern>
-            <!-- keep 3 months worth of history -->
-            <maxHistory>3</maxHistory>
-        </rollingPolicy>
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>/var/log/application.log</file>
         <encoder>
-            <pattern>%date{yyyy-MM-dd HH:mm:ss ZZZZ} - [%level] - from %logger in %thread %n%message%n%xException%n
-            </pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%level] from %logger in %thread - %message%n%xException</pattern>
         </encoder>
     </appender>
 
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%level] from %logger in %thread - %message%n%xException</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ASYNCFILE" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="FILE"/>
+    </appender>
+
+    <appender name="ASYNCSTDOUT" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="STDOUT"/>
+    </appender>
+
+    <!--
+    <appender name="Sentry" class="com.getsentry.raven.logback.SentryAppender">
+      <dsn>YOUR SENTRY DSN</dsn>
+      <release>RELEASE</release>
+    </appender>
+    -->
+
     <logger name="play" level="INFO"/>
     <logger name="application" level="INFO"/>
-    <!-- BoneCP is very chatty, so suppress everything but the errors -->
-    <logger name="com.jolbox.bonecp" level="ERROR"/>
 
-    <root level="INFO">
-        <!-- <appender-ref ref="STDOUT" /> -->
-        <appender-ref ref="FILE"/>
+    <logger name="com.gargoylesoftware.htmlunit.javascript" level="OFF"/>
+
+    <root level="WARN">
+        <appender-ref ref="ASYNCFILE"/>
+        <appender-ref ref="ASYNCSTDOUT"/>
+        <appender-ref ref="Sentry"/>
     </root>
 
 </configuration>

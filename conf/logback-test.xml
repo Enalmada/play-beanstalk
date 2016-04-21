@@ -2,16 +2,6 @@
 <configuration>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <!-- Play 2.4.1 bug: during startup, Play _always_ (even in test) resets
-         logger configuration. But it shows a warning if we try to specify
-         a log file. https://github.com/playframework/playframework/issues/4574
-         -->
-        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-            <evaluator>
-                <expression>event.getMessage().contains("Logger configuration in conf files is deprecated and has no effect.")</expression>
-            </evaluator>
-            <onMatch>DENY</onMatch>
-        </filter>
         <encoder>
             <pattern>%d{HH:mm:ss,America/Los_Angeles} %-5level %logger{36} - %msg%n</pattern>
         </encoder>

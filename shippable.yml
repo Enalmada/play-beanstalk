@@ -1,3 +1,5 @@
+# Shippable has a new format.  This is my attempt at it
+
 # exclude
 branches:
   except:
@@ -10,37 +12,41 @@ branches:
 
 language: scala
 scala:
-  - 2.11.7
+  - 2.11.8
 jdk:
   - oraclejdk8
 
 node_js:
    - "0.12.7"
 
-notifications:
-     email:
-         recipients:
-             - your@email.com
-         on_success: change
-         on_failure: always
+integrations:
+  notifications:
+    - integrationName: email
+      type: email
+      recipients:
+        - <YOUR_EMAIL>
+      on_success: always
+      on_failure: always
+      on_pull_request: false
+      branches:
+        only:
+          - master
 
-# aws access key of user with s3 and beanstalk access
 env:
   global:
     - AWS_ACCESS_KEY_ID=<ACCESS_KEY>
     - secure: <shippable secured secret in settings: AWS_SECRET_ACCESS_KEY=<AWS_SECRET> >
 
-script:
-  - export SBT_OPTS="-Xmx512M -Xss512M -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -Duser.timezone=UTC"
-  - sbt compile test stage dist docker:stage
+build:
 
-after_success:
-  - cp -R beanstalk/. target/docker
-  - cp -R newrelic target/docker/stage
-  - cd target/docker
-  - jar -cMf docker-$BUILD_NUMBER.zip .
-  - aws s3 cp docker-$BUILD_NUMBER.zip s3://<YOUR_BUCKET>/docker-$BUILD_NUMBER.zip
-  - aws elasticbeanstalk create-application-version --application-name <YOUR_APPLICATION> --version-label $BUILD_NUMBER --source-bundle S3Bucket=<YOUR_BUCKET>,S3Key=docker-$BUILD_NUMBER.zip --region us-east-1
-  - aws elasticbeanstalk update-environment         --environment-name <WEB_ENVIRONMENT>  --version-label $BUILD_NUMBER --region us-east-1
-  # If you want to do a worker tier,
-  # - aws elasticbeanstalk update-environment --environment-name <WORKER_ENV_NAME> --version-label $BUILD_NUMBER --region us-east-1
+  ci:
+    # IF you use sentry, the following two sed lines might help else ignore
+    - sed -i "s/RELEASE/$BUILD_NUMBER/g" conf/logback-prod.xml
+    - sed -i "s/\${?VERSION}/\"$BUILD_NUMBER\"/g" conf/application.conf
+    - export SBT_OPTS="-XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -Duser.timezone=UTC"
+    - sbt clean compile test dist
+
+  on_success:
+    - aws s3 cp target/universal/<PROJECT_NAME>-<PROJECT_VERSION>.zip s3://<YOUR_BUCKET>/<PROJECT_NAME>-$BUILD_NUMBER.zip
+    - aws elasticbeanstalk create-application-version --application-name <YOUR_APPLICATION> --version-label $BUILD_NUMBER --source-bundle S3Bucket=<YOUR_BUCKET>,S3Key=<PROJECT_NAME>-$BUILD_NUMBER.zip --region us-east-1
+    - aws elasticbeanstalk update-environment --environment-name <WEB_ENVIRONMENT> --version-label $BUILD_NUMBER --region us-east-1
