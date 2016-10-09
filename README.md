@@ -44,8 +44,8 @@ play-beanstalk is built and tested with play 2.5 but the principles apply to oth
    LetsEncrypt used to be the free way to go but AWS now offers free ssl key with AWS Certificate manager service.
    
 ## Gotchas
--- If you change beanstock env variables using the cli, they will override the file from that point.  Best to change non-secure variables ok for source control only using the .extensions file and secure variables only in the beanstalk ui.
--- this project uses pagespeed in front of it for some extra web optimizations.  You will need to look into your optimal settings for pagespeed.config, or remove pagespeed if you don't have web site
+ - If you change beanstock env variables using the cli, they will override the file from that point.  Best to change non-secure variables ok for source control only using the .extensions file and secure variables only in the beanstalk ui.
+ - this project uses pagespeed in front of it for some extra web optimizations.  You will need to look into your optimal settings for pagespeed.config, or remove pagespeed if you don't have web site
 
 ## License
 
