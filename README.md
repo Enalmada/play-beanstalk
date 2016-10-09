@@ -11,11 +11,10 @@ AWS Beanstalk is one of the easiest ways to get you app up production ready:
 play-beanstalk is built and tested with play 2.5 but the principles apply to other versions.
 
 ## Quickstart
-
--- This is worth a read: https://www.davemaple.com/articles/deploy-playframework-elastic-beanstalk-jenkins
--- Put the dist/Procfile and dist/.ebextensions into your project
--- do "activator dist"
--- Create beanstalk web environment for type java and load your target/universal/<appname>.zip file
+ - This is worth a read: https://www.davemaple.com/articles/deploy-playframework-elastic-beanstalk-jenkins
+ - Put the dist/Procfile and dist/.ebextensions into your project
+ - do "activator dist"
+ - Create beanstalk web environment for type java and load your target/universal/<appname>.zip file
 
 ##Optional:
 
