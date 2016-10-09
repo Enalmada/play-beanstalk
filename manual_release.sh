@@ -12,7 +12,6 @@ BUCKET=my-bucket
 WEB_ENV_NAME=play-beanstalk-web
 JOB_ENV_NAME=play-beanstalk-worker
 REGION=us-east-1
-BEANSTALK_READY=true
 
 # You shouldn't need to change anything below this line
 # --------------------------------------------------------------------------
@@ -31,8 +30,10 @@ aws s3 cp target/universal/play-beanstalk-1.1-SNAPSHOT.zip s3://$BUCKET/$APPLICA
 
 echo "Create beanstalk version..."
 aws elasticbeanstalk create-application-version --application-name $APPLICATION --version-label $1 --source-bundle S3Bucket=$BUCKET,S3Key=$APPLICATION-$1.zip --region $REGION
+
 echo "Tell beanstalk to use the new version in web..."
 aws elasticbeanstalk update-environment --environment-name $WEB_ENV_NAME        --version-label $1 --region $REGION
-echo "Tell beanstalk to use the new version in worker..."
-aws elasticbeanstalk update-environment --environment-name $JOB_ENV_NAME        --version-label $1 --region $REGION
+
+#echo "Tell beanstalk to use the new version in worker..."
+#aws elasticbeanstalk update-environment --environment-name $JOB_ENV_NAME        --version-label $1 --region $REGION
 

@@ -12,6 +12,7 @@ libraryDependencies ++= Seq(
   cache,
   ws,
   specs2 % Test,
+  //     "com.getsentry.raven" % "raven-logback" % "7.7.0", // for Sentry
   "com.typesafe.play" %% "anorm" % "2.5.0",           // DB Connection
   "org.postgresql" % "postgresql" % "9.4-1201-jdbc41" // JDBC Driver
 )

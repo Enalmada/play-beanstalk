@@ -1,23 +1,20 @@
-# Shippable has a new format.  This is my attempt at it
-
 # exclude
-branches:
-  except:
-    - master
-
-# include
 branches:
   only:
     - master
 
 language: scala
+
 scala:
   - 2.11.8
+
 jdk:
   - oraclejdk8
 
-node_js:
-   - "0.12.7"
+env:
+  global:
+    - AWS_ACCESS_KEY_ID=<ACCESS_KEY>
+    - secure: <shippable secured secret in settings: AWS_SECRET_ACCESS_KEY=<AWS_SECRET> >
 
 integrations:
   notifications:
@@ -27,26 +24,26 @@ integrations:
         - <YOUR_EMAIL>
       on_success: always
       on_failure: always
-      on_pull_request: false
-      branches:
-        only:
-          - master
-
-env:
-  global:
-    - AWS_ACCESS_KEY_ID=<ACCESS_KEY>
-    - secure: <shippable secured secret in settings: AWS_SECRET_ACCESS_KEY=<AWS_SECRET> >
+      on_pull_request: never
 
 build:
+  # cache fetch and save may not be faster than redownload deps
+  #cache: true
+  #cache_dir_list:
+  #  - $SHIPPABLE_BUILD_DIR
+  #  - $HOME/.ivy2
+  #  - $HOME/.m2
 
   ci:
-    # IF you use sentry, the following two sed lines might help else ignore
+    # Update logback with release number so sentry can mark server regressions by version
     - sed -i "s/RELEASE/$BUILD_NUMBER/g" conf/logback-prod.xml
+    # Update application with release number so sentry can mark browser regressions by version
     - sed -i "s/\${?VERSION}/\"$BUILD_NUMBER\"/g" conf/application.conf
     - export SBT_OPTS="-XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -Duser.timezone=UTC"
     - sbt clean compile test dist
 
   on_success:
+    # Note Build dir must be in same region as beanstalk
     - aws s3 cp target/universal/<PROJECT_NAME>-<PROJECT_VERSION>.zip s3://<YOUR_BUCKET>/<PROJECT_NAME>-$BUILD_NUMBER.zip
     - aws elasticbeanstalk create-application-version --application-name <YOUR_APPLICATION> --version-label $BUILD_NUMBER --source-bundle S3Bucket=<YOUR_BUCKET>,S3Key=<PROJECT_NAME>-$BUILD_NUMBER.zip --region us-east-1
     - aws elasticbeanstalk update-environment --environment-name <WEB_ENVIRONMENT> --version-label $BUILD_NUMBER --region us-east-1

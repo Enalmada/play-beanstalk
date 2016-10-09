@@ -23,10 +23,14 @@
         <appender-ref ref="STDOUT"/>
     </appender>
 
+    <!-- Sentry is pretty convenient for error aggregation -->
     <!--
     <appender name="Sentry" class="com.getsentry.raven.logback.SentryAppender">
-      <dsn>YOUR SENTRY DSN</dsn>
-      <release>RELEASE</release>
+        <dsn>https://<your-dsn>?options</dsn>
+        <release>RELEASE</release>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
     </appender>
     -->
 
@@ -38,7 +42,7 @@
     <root level="WARN">
         <appender-ref ref="ASYNCFILE"/>
         <appender-ref ref="ASYNCSTDOUT"/>
-        <appender-ref ref="Sentry"/>
+        <!-- <appender-ref ref="Sentry"/> -->
     </root>
 
 </configuration>
