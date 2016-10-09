@@ -12,9 +12,9 @@ play-beanstalk is built and tested with play 2.5 but the principles apply to oth
 
 ## Quickstart
  - This is worth a read: https://www.davemaple.com/articles/deploy-playframework-elastic-beanstalk-jenkins
- - Put the dist/Procfile and dist/.ebextensions into your project
+ - Copy the dist directory into your project
  - do "activator dist"
- - Create beanstalk web environment for type java and load your target/universal/<appname>.zip file
+ - Create beanstalk web environment for type java and load your target/universal/<appname>.zip file when asked 
 
 ##Optional:
 
@@ -44,6 +44,7 @@ play-beanstalk is built and tested with play 2.5 but the principles apply to oth
    LetsEncrypt used to be the free way to go but AWS now offers free ssl key with AWS Certificate manager service.
    
 ## Gotchas
+ - It is worth spend time learning what all the available settings are.
  - If you change beanstock env variables using the cli, they will override the file from that point.  Best to change non-secure variables ok for source control only using the .extensions file and secure variables only in the beanstalk ui.
  - this project uses pagespeed in front of it for some extra web optimizations.  You will need to look into your optimal settings for pagespeed.config, or remove pagespeed if you don't have web site
 
